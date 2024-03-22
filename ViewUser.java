@@ -1,5 +1,5 @@
-import packs.*;
 import java.sql.*;
+import javax.swing.table.DefaultTableModel;
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -14,9 +14,56 @@ public class ViewUser extends javax.swing.JFrame {
     /**
      * Creates new form ViewUser
      */
-    public ViewUser() {
+    
+    public  ViewUser(){
         initComponents();
+    try (Connection connection = DatabaseConnection.getConnection()) {
+                           // Query and print admins
+String queryAdmins = "SELECT admin_id, username FROM admin";
+try (PreparedStatement stmt = connection.prepareStatement(queryAdmins)) {
+    ResultSet rs = stmt.executeQuery();
+    while (rs.next()) {
+        String uid = String.valueOf(rs.getInt("admin_id"));
+        String uname = rs.getString("username");
+        String tbData[] = {uid, uname, "Admin"};
+        DefaultTableModel tbModel = (DefaultTableModel) jTable1.getModel();
+        tbModel.addRow(tbData);
     }
+}
+
+// Query and print sellers
+String querySellers = "SELECT seller_id, username FROM seller";
+try (PreparedStatement stmt = connection.prepareStatement(querySellers)) {
+    ResultSet rs = stmt.executeQuery();
+    while (rs.next()) {
+        String uid = String.valueOf(rs.getInt("seller_id"));
+        String uname = rs.getString("username");
+        String tbData[] = {uid, uname, "Seller"};
+        DefaultTableModel tbModel = (DefaultTableModel) jTable1.getModel();
+        tbModel.addRow(tbData);
+    }
+}
+
+// Query and print buyers
+String queryBuyers = "SELECT buyer_id, username FROM buyer";
+try (PreparedStatement stmt = connection.prepareStatement(queryBuyers)) {
+    ResultSet rs = stmt.executeQuery();
+    while (rs.next()) {
+        String uid = String.valueOf(rs.getInt("buyer_id"));
+        String uname = rs.getString("username");
+        String tbData[] = {uid, uname, "Buyer"};
+        DefaultTableModel tbModel = (DefaultTableModel) jTable1.getModel();
+        tbModel.addRow(tbData);
+    }
+}
+
+                        } catch (SQLException e) {
+                            System.out.println("Database error: " + e.getMessage());
+                        }
+    }
+    
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -29,16 +76,15 @@ public class ViewUser extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTable1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jTable1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jTable1.setFont(new java.awt.Font("Segoe UI", 2, 14)); // NOI18N
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+
             },
             new String [] {
                 "User ID", "Name", "Role"
@@ -47,13 +93,30 @@ public class ViewUser extends javax.swing.JFrame {
             Class[] types = new Class [] {
                 java.lang.Integer.class, java.lang.String.class, java.lang.String.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
         });
         jTable1.setToolTipText("");
+        jTable1.setAlignmentX(1.0F);
+        jTable1.setAlignmentY(1.0F);
         jScrollPane1.setViewportView(jTable1);
+
+        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jButton1.setText("Go Back");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -61,19 +124,30 @@ public class ViewUser extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(173, 173, 173)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 631, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 631, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(196, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(193, 193, 193)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(237, Short.MAX_VALUE))
+                .addGap(134, 134, 134)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(462, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+       
+        setVisible(false);
+        AdminHome admin = new AdminHome();
+        admin.setVisible(true);
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -103,56 +177,10 @@ public class ViewUser extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        try (Connection connection = DatabaseConnection.getConnection()) {
-                            // Query and print admins
-                            String queryAdmins = "SELECT username FROM admin";
-                            try (PreparedStatement stmt = connection.prepareStatement(queryAdmins)) {
-                                ResultSet rs = stmt.executeQuery();
-                                while (rs.next()) {
-                                    String uid = String.valueOf(rs.getInt("admin_id"));
-                                    String uname = rs.getString("username");
-                                    String tbData[] = {uid,uname,"Admin"};
-                                    DefaultTableModel tbModel = (DefaultTableModel) jTable1.getModel();
-                                    tbModel.addRow(tbData);
-                                }
-                            }
-                            
-
-                            // Query and print sellers
-                            String querySellers = "SELECT username FROM seller";
-                            
-                            try (PreparedStatement stmt = connection.prepareStatement(querySellers)) {
-                                ResultSet rs = stmt.executeQuery();
-                                while (rs.next()) {
-                                    String uid = String.valueOf(rs.getInt("seller_id"));
-                                    String uname = rs.getString("username");
-                                    String tbData[] = {uid,uname,"Seller"};
-                                    DefaultTableModel tbModel = (DefaultTableModel) jTable1.getModel();
-                                    tbModel.addRow(tbData);
-                                }
-                            }
-                    
-                            // Query and print buyers
-                            String queryBuyers = "SELECT username FROM buyer";
-                                try (PreparedStatement stmt = connection.prepareStatement(queryBuyers)) {
-                                    ResultSet rs = stmt.executeQuery();
-                                    while (rs.next()) {
-                                        String uid = String.valueOf(rs.getInt("buyer_id"));
-                                        String uname = rs.getString("username");
-                                        String tbData[] = {uid,uname,"Buyer"};
-                                        DefaultTableModel tbModel = (DefaultTableModel) jTable1.getModel();
-                                        tbModel.addRow(tbData);
-    
-                                        
-                                        
-                                    }
-                                }
-                        } catch (SQLException e) {
-                            System.out.println("Database error: " + e.getMessage());
-                        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables

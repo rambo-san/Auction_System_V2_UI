@@ -1,5 +1,3 @@
-package packs;
-
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -32,7 +30,6 @@ public class AdminOperations {
     }
 
     public void initializeServer() {
-        System.out.println("Server initializing...");
         try {
             // Start server if not already running
             if (serverSocket == null) {
@@ -59,52 +56,13 @@ public class AdminOperations {
         }
     }
 
-    public void startAuction() {
-        Scanner scanner = new Scanner(System.in);  // Ensure scanner is declared
-        System.out.println("Available products:");
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            String query = "SELECT item_id, name, description, seller_id FROM item WHERE status = 0";
-            try {
-                PreparedStatement stmt = conn.prepareStatement(query);
-                ResultSet rs = stmt.executeQuery();
-                boolean hasProducts = false;
-                while (rs.next()) {
-                    hasProducts = true;
-                    System.out.println("Item ID: " + rs.getInt("item_id") + ", Name: " + rs.getString("name") + ", Description: " + rs.getString("description") + ", Seller ID: " + rs.getInt("seller_id"));
-                }
-                if (!hasProducts) {
-                    System.out.println("No products available for auction.");
-                    return;
-                }
-                System.out.println("Enter the item ID to start the auction for:");
-                item_id = scanner.nextInt();
-                query="select * from item where item_id="+item_id;
-                try (PreparedStatement st = conn.prepareStatement(query)) {
-                    ResultSet rst = st.executeQuery();
-
-                    if (!rst.next() || rst.getInt("status") == 1) {
-                        System.out.println("Invalid input/Auction ID. Please enter a number.");
-                        return;
-                    }
-            }
-                scanner.close();
-            }
-            catch (SQLException e) {
-                System.out.println("Database error: " + e.getMessage());
-                scanner.close();
-                return;
-            }
-        } catch (SQLException e) {
-            System.out.println("Database error: " + e.getMessage());
-            scanner.close();
-            return;
-        }
-
+    public void startAuction( int id) {
+        
+        item_id=id;
         if (!auctionActive) {
             auctionActive = true;
             currentBidId = generateBidId();
             auctionLatch = new CountDownLatch(1);
-            System.out.println("Auction has started. Accepting bids for 1 minute. Bid ID: " + currentBidId);
             bids.put(currentBidId, new BidInfo(-1, 0.0));
             startAuctionTimer();
 
@@ -126,11 +84,11 @@ public class AdminOperations {
         auctionTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                endAuction();
+                String str = endAuction();
             }
         },60000); // Auction duration is 1 minute (60 seconds)
     }
-    public void endAuction() {
+    public String endAuction() {
         auctionActive = false;
         auctionTimer.cancel();
         currentBidId = -1; // Reset the currentBidId indicating no active auction
@@ -141,7 +99,7 @@ public class AdminOperations {
                 .max(Comparator.comparingDouble(BidInfo::getBidAmount));
 
         if (winningBid.get().getBuyerId()!=-1) {
-            System.out.println("Winner is Buyer ID " + winningBid.get().getBuyerId() + " with a bid of " + winningBid.get().getBidAmount());
+            String str  = "Winner is Buyer ID " + winningBid.get().getBuyerId() + " with a bid of " + winningBid.get().getBidAmount();
             String query = "UPDATE item SET status = 1 WHERE item_id ="+ item_id;
             try (Connection conn = DatabaseConnection.getConnection();
                  PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -166,13 +124,14 @@ public class AdminOperations {
             } catch (SQLException e) {
                 System.out.println("Database error: " + e.getMessage());
             }
+            return str;
         } else {
             System.out.println("No bids received for this auction.");
         }
 
         bids.clear();
         auctionLatch.countDown();
-        System.exit(0);
+        return "No winner!";
         
     }
 

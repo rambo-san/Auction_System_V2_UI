@@ -26,18 +26,22 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="237" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" attributes="0">
                       <EmptySpace min="-2" pref="59" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="listuser" min="-2" pref="378" max="-2" attributes="0"/>
-                          <Component id="startauction" min="-2" pref="378" max="-2" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Component id="startauction" min="-2" pref="378" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                              <Component id="errorauction" min="-2" pref="234" max="-2" attributes="0"/>
+                          </Group>
                           <Component id="jButton2" alignment="0" min="-2" pref="378" max="-2" attributes="0"/>
                           <Component id="jButton4" alignment="0" min="-2" pref="378" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="259" max="32767" attributes="0"/>
+              <EmptySpace pref="65" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -51,7 +55,10 @@
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="listuser" min="-2" pref="59" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="startauction" min="-2" pref="59" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="startauction" min="-2" pref="59" max="-2" attributes="0"/>
+                  <Component id="errorauction" min="-2" pref="45" max="-2" attributes="0"/>
+              </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="jButton4" min="-2" pref="59" max="-2" attributes="0"/>
               <EmptySpace pref="235" max="32767" attributes="0"/>
@@ -111,6 +118,8 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton4ActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="errorauction">
     </Component>
   </SubComponents>
 </Form>

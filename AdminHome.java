@@ -1,5 +1,10 @@
 
-import packs.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -33,6 +38,7 @@ public class AdminHome extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         listuser = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
+        errorauction = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -82,11 +88,14 @@ public class AdminHome extends javax.swing.JFrame {
                         .addGap(59, 59, 59)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(listuser, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(startauction, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(startauction, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(27, 27, 27)
+                                .addComponent(errorauction, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jLabel1))
-                .addContainerGap(259, Short.MAX_VALUE))
+                .addContainerGap(65, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -98,7 +107,9 @@ public class AdminHome extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(listuser, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(startauction, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(startauction, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(errorauction, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(235, Short.MAX_VALUE))
@@ -108,7 +119,22 @@ public class AdminHome extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void startauctionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startauctionActionPerformed
-        // TODO add your handling code here:
+ 
+        try(Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement("Select * from item  WHERE status = 0")){
+                ResultSet rs = stmt.executeQuery();
+                if(rs.next()){
+                     AuctionBase auction = new AuctionBase();
+        setVisible(false);
+        auction.setVisible(true);
+                }
+                else{
+                    errorauction.setText("No items up for auction");
+                }
+        } catch (SQLException ex) {
+            Logger.getLogger(AdminHome.class.getName()).log(Level.SEVERE, null, ex);
+        }
+       
     }//GEN-LAST:event_startauctionActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
@@ -166,6 +192,7 @@ public class AdminHome extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel errorauction;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;

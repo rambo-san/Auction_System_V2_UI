@@ -1,5 +1,3 @@
-package packs; // Ensure this matches the package name of your other classes, if they are intended to be together.
-
 public class BidInfo {
     private Double bidAmount;
     private int buyerId;

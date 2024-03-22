@@ -1,5 +1,3 @@
-package packs;
-
 import java.sql.*;
 
 public class UserOperations {
