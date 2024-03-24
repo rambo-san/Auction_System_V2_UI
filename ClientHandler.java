@@ -59,7 +59,7 @@ public class ClientHandler implements Runnable {
             try {
                 int buyerId = Integer.parseInt(parts[1]);
                 Double bidAmount = Double.parseDouble(parts[2]);
-
+                AuctionFrame.jcurrent.setText(bidAmount.toString());
                 // Assuming there's only one active auction at a time and its ID is known to AdminOperations
                 int currentBidId = adminOperations.getCurrentBidId(); // This method needs to be implemented in AdminOperations
 
@@ -68,6 +68,7 @@ public class ClientHandler implements Runnable {
 
                     if (currentBidInfo == null || bidAmount > currentBidInfo.getBidAmount()) {
                         bids.put(currentBidId, new BidInfo(buyerId, bidAmount));
+                        AuctionFrame.jhighest.setText(bidAmount.toString());
                         out.println("Bid accepted for " + bidAmount);
                     } else {
                         out.println("Bid not accepted. Current highest bid is higher or equal.");

@@ -7,22 +7,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 //import java.util.concurrent.TimeUnit;
 
 public class AdminOperations {
-
-    private Timer auctionTimer;
+    
     private boolean auctionActive = false;
     private ExecutorService clientHandlerExecutor;
     private ConcurrentHashMap<Integer, BidInfo> bids = new ConcurrentHashMap<>();
     private ServerSocket serverSocket = null;  // Initialize to null
     private boolean running = true;
-    private CountDownLatch auctionLatch;
     private volatile int currentBidId = -1; // Default to -1 indicating no active auction
-    private int item_id = -1;
+    private int item_id =-1;
 
     public static void main(String[] args) {
         AdminOperations server = new AdminOperations();
@@ -43,28 +40,31 @@ public class AdminOperations {
     }
 
     private void startServer() {
-        while (running) {
-            try {
-                Socket clientSocket = serverSocket.accept();
-                // Handle client connection in a separate thread
-                System.out.println("Client connected.");
-                ClientHandler clientHandler = new ClientHandler(clientSocket, bids, this);
-                clientHandlerExecutor.execute(clientHandler);  // Submit to thread pool
-            } catch (IOException e) {
-                System.out.println("Error accepting client connection: " + e.getMessage());
+        Thread serverThread = new Thread(() -> {
+            while (running) {
+                try {
+                    Socket clientSocket = serverSocket.accept();
+                   System.out.println("Client connected.");
+                        ClientHandler clientHandler = new ClientHandler(clientSocket, bids, this);
+                        clientHandlerExecutor.execute(clientHandler);  // Submit to thread pool*/
+                } catch (IOException e) {
+                    System.out.println("Error accepting client connection: " + e.getMessage());
+                }
             }
-        }
+        });
+        serverThread.start();
     }
 
-    public void startAuction( int id) {
+    public void startAuction( ) {
+        System.out.println("ID2 : "+AuctionBase.Item_id);
         
-        item_id=id;
+        item_id=AuctionBase.Item_id;
         if (!auctionActive) {
+            System.out.println("ID3 : "+AuctionBase.Item_id);
+            
             auctionActive = true;
             currentBidId = generateBidId();
-            auctionLatch = new CountDownLatch(1);
             bids.put(currentBidId, new BidInfo(-1, 0.0));
-            startAuctionTimer();
 
             // Start server if not already running (redundant check for clarity)
             if (serverSocket == null) {
@@ -79,18 +79,10 @@ public class AdminOperations {
         return Math.abs(UUID.randomUUID().hashCode());
     }
 
-    private void startAuctionTimer() {
-        auctionTimer = new Timer();
-        auctionTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                String str = endAuction();
-            }
-        },60000); // Auction duration is 1 minute (60 seconds)
-    }
+
     public String endAuction() {
+         String str;
         auctionActive = false;
-        auctionTimer.cancel();
         currentBidId = -1; // Reset the currentBidId indicating no active auction
         System.out.println("Auction ended.");
 
@@ -99,7 +91,7 @@ public class AdminOperations {
                 .max(Comparator.comparingDouble(BidInfo::getBidAmount));
 
         if (winningBid.get().getBuyerId()!=-1) {
-            String str  = "Winner is Buyer ID " + winningBid.get().getBuyerId() + " with a bid of " + winningBid.get().getBidAmount();
+           str  = "Winner is Buyer ID " + winningBid.get().getBuyerId() + " with a bid of " + winningBid.get().getBidAmount();
             String query = "UPDATE item SET status = 1 WHERE item_id ="+ item_id;
             try (Connection conn = DatabaseConnection.getConnection();
                  PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -126,12 +118,12 @@ public class AdminOperations {
             }
             return str;
         } else {
-            System.out.println("No bids received for this auction.");
+            str="No bids received for this auction.";
         }
 
         bids.clear();
-        auctionLatch.countDown();
-        return "No winner!";
+        return str;
+        
         
     }
 

@@ -11,9 +11,11 @@ public class AuctionResult extends javax.swing.JFrame {
 
     /**
      * Creates new form AuctionResult
+     * @param str
      */
-    public AuctionResult() {
+    public AuctionResult(String str) {
         initComponents();
+        result.setText(str);
     }
 
     /**
@@ -36,6 +38,11 @@ public class AuctionResult extends javax.swing.JFrame {
         jLabel1.setText("Auction Result");
 
         result.setFont(new java.awt.Font("Segoe UI", 2, 18)); // NOI18N
+        result.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resultActionPerformed(evt);
+            }
+        });
 
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jButton1.setText("Go to Main Menu");
@@ -77,9 +84,9 @@ public class AuctionResult extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(153, 153, 153)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(result, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(40, 40, 40)
+                .addComponent(result, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(58, 58, 58)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2))
@@ -98,6 +105,10 @@ public class AuctionResult extends javax.swing.JFrame {
         AdminHome admin = new AdminHome();
         admin.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void resultActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resultActionPerformed
+
+    }//GEN-LAST:event_resultActionPerformed
 
     /**
      * @param args the command line arguments
@@ -129,7 +140,6 @@ public class AuctionResult extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new AuctionResult().setVisible(true);
             }
         });
     }

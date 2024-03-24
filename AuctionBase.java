@@ -2,6 +2,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -13,6 +15,7 @@ import javax.swing.table.DefaultTableModel;
  * @author abhis
  */
 public class AuctionBase extends javax.swing.JFrame {
+    public static int Item_id = -1;
 
     /**
      * Creates new form AuctionBase
@@ -156,15 +159,12 @@ public class AuctionBase extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(92, 92, 92)
+                .addComponent(jLabel1)
+                .addGap(81, 81, 81)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(92, 92, 92)
-                        .addComponent(jLabel1)
-                        .addGap(52, 52, 52)
-                        .addComponent(errorauctionbase, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(205, 205, 205)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(errorauctionbase, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -189,9 +189,28 @@ public class AuctionBase extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         //int id = Integer.getInteger(auctionid.getText());
         System.out.println(auctionid.getText());
-        AuctionFrame act = new AuctionFrame(Integer.parseInt(auctionid.getText()));
-        setVisible(false);
-        act.setVisible(true);
+        Item_id = Integer.parseInt(auctionid.getText());
+        String query = "select * from item where item_id="+Item_id;
+                try (Connection conn = DatabaseConnection.getConnection();
+                        PreparedStatement st = conn.prepareStatement(query)) {
+                    ResultSet rst = st.executeQuery();
+
+                    if (!rst.next() || rst.getInt("status") == 1) {
+                        errorauctionbase.setText("Invalid input/Auction ID. Please enter a number.");
+                    }
+                    else{
+                        AuctionFrame act;
+                        act = new AuctionFrame();
+                //setVisible(false);
+                act.setVisible(true);
+                    }
+                }
+                catch(Exception e){
+                    errorauctionbase.setText(e.getMessage());
+                }
+        
+        
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -228,11 +247,6 @@ public class AuctionBase extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new AuctionBase().setVisible(true);
-            }
-        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

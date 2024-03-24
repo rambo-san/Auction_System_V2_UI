@@ -12,9 +12,17 @@ public class AuctionFrame extends javax.swing.JFrame {
     /**
      * Creates new form AuctionFrame
      */
-    public AuctionFrame(int id) {
+    public AuctionFrame() {
         initComponents();
-        adminOperations.startAuction(id);
+        System.out.println("ID : "+AuctionBase.Item_id);
+        if(AuctionBase.Item_id!=-1){
+            System.out.println("ID1 : "+AuctionBase.Item_id);
+        try{
+            adminOperations.startAuction();
+        }catch(Exception e){
+            System.out.println("Error in AuctionFrame : "+e.getMessage());
+        }
+        }
     }
 
     /**
@@ -122,7 +130,10 @@ public class AuctionFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        adminOperations.endAuction();
+       String str = adminOperations.endAuction();
+        AuctionResult auctionResult = new AuctionResult( str);
+        auctionResult.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jcurrentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcurrentActionPerformed
@@ -173,7 +184,7 @@ public class AuctionFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JTextField jcurrent;
-    private javax.swing.JTextField jhighest;
+    public static javax.swing.JTextField jcurrent;
+    public static javax.swing.JTextField jhighest;
     // End of variables declaration//GEN-END:variables
 }
